@@ -1,0 +1,470 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled (-pooler) pour l'app Next.js / Prisma Client
+  url       = env("DATABASE_URL")
+  // Direct (sans pooler) pour migrations Prisma — requis sur Neon
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+// ——— Enums ———
+
+enum GlobalRole {
+  USER
+  PLATFORM_ADMIN
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  EMPLOYEE
+  INDEPENDENT
+}
+
+enum AccountType {
+  INDIVIDUAL
+  ARTISAN
+  BOTH
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum InterventionStatus {
+  PENDING
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum ServiceRequestStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+enum ReportStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+// ——— Models ———
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  firstName     String
+  lastName      String
+  phone         String?
+  image         String?
+  globalRole    GlobalRole  @default(USER)
+  accountType   AccountType @default(INDIVIDUAL)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  memberships     CompanyMembership[]
+  artisanProfiles ArtisanProfile[]
+  customersOwned  Customer[]          @relation("CustomerOwner")
+  reviews         Review[]
+  serviceRequests ServiceRequest[]    @relation("RequestAuthor")
+  accounts        Account[]
+  sessions        Session[]
+  reportsFiled    Report[]            @relation("ReportAuthor")
+
+  @@index([email])
+  @@index([globalRole])
+}
+
+/// Tables Auth.js (compatibilité OAuth future)
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Company {
+  id           String   @id @default(cuid())
+  name         String
+  legalName    String?
+  siret        String?  @unique
+  vatNumber    String?
+  email        String?
+  phone        String?
+  website      String?
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  postalCode   String?
+  country      String   @default("FR")
+  description  String?  @db.Text
+  logoUrl      String?
+  isActive     Boolean  @default(true)
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  memberships     CompanyMembership[]
+  artisanProfiles ArtisanProfile[]
+  customers       Customer[]
+  appointments    Appointment[]
+  interventions   Intervention[]
+  quotes          Quote[]
+  invoices        Invoice[]
+  serviceRequests ServiceRequest[]
+  reviews         Review[]
+
+  @@index([city])
+  @@index([isActive])
+}
+
+model CompanyMembership {
+  id        String         @id @default(cuid())
+  userId    String
+  companyId String
+  role      MembershipRole @default(EMPLOYEE)
+  isDefault Boolean        @default(false)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@index([companyId])
+  @@index([userId])
+}
+
+model ArtisanProfile {
+  id              String   @id @default(cuid())
+  userId          String
+  companyId       String
+  slug            String   @unique
+  trade           String
+  trades          String[] @default([])
+  bio             String?  @db.Text
+  serviceArea     String?
+  city            String?
+  postalCode      String?
+  latitude        Float?
+  longitude       Float?
+  yearsExperience Int?
+  isPublic        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  ratingAvg       Float    @default(0)
+  ratingCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  reviews         Review[]
+  serviceRequests ServiceRequest[]
+
+  @@index([trade])
+  @@index([city])
+  @@index([isPublic])
+  @@index([slug])
+}
+
+model Customer {
+  id           String   @id @default(cuid())
+  companyId    String
+  ownerUserId  String?
+  firstName    String
+  lastName     String
+  email        String?
+  phone        String?
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  postalCode   String?
+  country      String   @default("FR")
+  notes        String?  @db.Text
+  isProspect   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner           User?            @relation("CustomerOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  appointments    Appointment[]
+  interventions   Intervention[]
+  quotes          Quote[]
+  invoices        Invoice[]
+  serviceRequests ServiceRequest[]
+
+  @@index([companyId])
+  @@index([email])
+  @@index([lastName, firstName])
+  @@index([isProspect])
+}
+
+model Appointment {
+  id             String            @id @default(cuid())
+  companyId      String
+  customerId     String?
+  interventionId String?           @unique
+  title          String
+  description    String?           @db.Text
+  startsAt       DateTime
+  endsAt         DateTime
+  status         AppointmentStatus @default(SCHEDULED)
+  location       String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer     Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  intervention Intervention? @relation(fields: [interventionId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, startsAt])
+  @@index([customerId])
+  @@index([status])
+}
+
+model Intervention {
+  id          String             @id @default(cuid())
+  companyId   String
+  customerId  String?
+  title       String
+  description String?            @db.Text
+  status      InterventionStatus @default(PENDING)
+  priority    Int                @default(0)
+  scheduledAt DateTime?
+  completedAt DateTime?
+  address     String?
+  city        String?
+  postalCode  String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer    Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  appointment Appointment?
+
+  @@index([companyId, status])
+  @@index([scheduledAt])
+  @@index([customerId])
+}
+
+model Quote {
+  id            String      @id @default(cuid())
+  companyId     String
+  customerId    String?
+  number        String
+  title         String
+  status        QuoteStatus @default(DRAFT)
+  issueDate     DateTime    @default(now())
+  validUntil    DateTime?
+  notes         String?     @db.Text
+  subtotalCents Int         @default(0)
+  taxCents      Int         @default(0)
+  totalCents    Int         @default(0)
+  currency      String      @default("EUR")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  company  Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items    QuoteItem[]
+  invoice  Invoice?
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+  @@index([customerId])
+}
+
+model QuoteItem {
+  id          String  @id @default(cuid())
+  quoteId     String
+  description String
+  quantity    Decimal @default(1) @db.Decimal(10, 2)
+  unitPriceCents Int
+  taxRate     Decimal @default(20) @db.Decimal(5, 2)
+  position    Int     @default(0)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  companyId     String
+  customerId    String?
+  quoteId       String?       @unique
+  number        String
+  title         String
+  status        InvoiceStatus @default(DRAFT)
+  issueDate     DateTime      @default(now())
+  dueDate       DateTime?
+  paidAt        DateTime?
+  notes         String?       @db.Text
+  subtotalCents Int           @default(0)
+  taxCents      Int           @default(0)
+  totalCents    Int           @default(0)
+  currency      String        @default("EUR")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  company  Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  quote    Quote?        @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  items    InvoiceItem[]
+
+  @@unique([companyId, number])
+  @@index([companyId, status])
+  @@index([customerId])
+  @@index([dueDate])
+}
+
+model InvoiceItem {
+  id             String  @id @default(cuid())
+  invoiceId      String
+  description    String
+  quantity       Decimal @default(1) @db.Decimal(10, 2)
+  unitPriceCents Int
+  taxRate        Decimal @default(20) @db.Decimal(5, 2)
+  position       Int     @default(0)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model Review {
+  id               String       @id @default(cuid())
+  companyId        String
+  artisanProfileId String
+  authorId         String?
+  authorName       String?
+  rating           Int
+  comment          String?      @db.Text
+  status           ReviewStatus @default(PENDING)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  company        Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  artisanProfile ArtisanProfile @relation(fields: [artisanProfileId], references: [id], onDelete: Cascade)
+  author         User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([artisanProfileId, status])
+  @@index([companyId])
+}
+
+model ServiceRequest {
+  id               String               @id @default(cuid())
+  companyId        String?
+  artisanProfileId String?
+  customerId       String?
+  authorId         String?
+  title            String
+  description      String               @db.Text
+  trade            String?
+  city             String?
+  postalCode       String?
+  phone            String?
+  email            String?
+  preferredDate    DateTime?
+  photoUrls        String[]             @default([])
+  status           ServiceRequestStatus @default(PENDING)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  company        Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  artisanProfile ArtisanProfile? @relation(fields: [artisanProfileId], references: [id], onDelete: SetNull)
+  customer       Customer?       @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  author         User?           @relation("RequestAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status])
+  @@index([artisanProfileId])
+  @@index([status])
+  @@index([city])
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  authorId    String?
+  targetType  String
+  targetId    String
+  reason      String
+  details     String?      @db.Text
+  status      ReportStatus @default(OPEN)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  resolvedAt  DateTime?
+
+  author User? @relation("ReportAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([targetType, targetId])
+}

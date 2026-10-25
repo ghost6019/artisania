@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: artisania-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: artisania
+      POSTGRES_PASSWORD: artisania
+      POSTGRES_DB: artisania
+    volumes:
+      - artisania_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U artisania -d artisania"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  artisania_pgdata:
