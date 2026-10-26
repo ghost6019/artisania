@@ -52,6 +52,9 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -61,7 +64,38 @@ body {
   background-image:
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(15, 118, 110, 0.06), transparent),
     linear-gradient(180deg, #f7f9fc 0%, var(--background) 28%);
-  background-attachment: fixed;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS: éviter le zoom auto sur focus des champs (< 16px) */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+@media (min-width: 641px) {
+  body {
+    background-attachment: fixed;
+  }
+}
+
+/* Encoches / home indicator */
+.safe-px {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.safe-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-pb {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 h1,

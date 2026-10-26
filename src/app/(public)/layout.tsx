@@ -10,7 +10,7 @@ export default function PublicLayout({
     <div className="flex min-h-screen flex-col bg-background">
       <PublicHeader />
       {/* Header fixed — réserve l'espace sauf sur les pages à hero full-bleed */}
-      <div className="flex-1 pt-14 sm:pt-[4.5rem] [&:has([data-fullbleed-hero])]:pt-0">
+      <div className="flex-1 pt-[calc(3.5rem+env(safe-area-inset-top))] sm:pt-[calc(4.5rem+env(safe-area-inset-top))] [&:has([data-fullbleed-hero])]:pt-0">
         {children}
       </div>
       <PublicFooter />

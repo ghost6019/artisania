@@ -30,12 +30,12 @@ export default async function ArtisanProfilePage({ params }: Props) {
   return (
     <div>
       <section className="border-b border-white/10 bg-ink text-white">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="mx-auto max-w-6xl safe-px py-8 sm:px-6 sm:py-10">
           <Button
             asChild
             variant="ghost"
             size="sm"
-            className="-ml-2 text-white/70 hover:bg-white/10 hover:text-white"
+            className="-ml-2 min-h-11 text-white/70 hover:bg-white/10 hover:text-white"
           >
             <Link href="/artisans">
               <ArrowLeft className="h-4 w-4" />
@@ -43,7 +43,7 @@ export default async function ArtisanProfilePage({ params }: Props) {
             </Link>
           </Button>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
+          <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6">
             <Badge variant="secondary" className="bg-white/10 text-white border-0">
               {artisan.trade}
             </Badge>
@@ -55,7 +55,7 @@ export default async function ArtisanProfilePage({ params }: Props) {
             ) : null}
           </div>
 
-          <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight">
+          <h1 className="mt-4 font-display text-[1.85rem] font-semibold leading-tight tracking-tight sm:text-4xl">
             {artisan.company.name}
           </h1>
           <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/65">
@@ -80,8 +80,8 @@ export default async function ArtisanProfilePage({ params }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
+      <div className="mx-auto grid max-w-6xl gap-6 safe-px py-8 sm:gap-8 sm:px-6 sm:py-10 lg:grid-cols-5">
+        <div className="order-2 lg:order-1 lg:col-span-3">
           {artisan.bio ? (
             <p className="text-base leading-relaxed text-ink/90 whitespace-pre-wrap">
               {artisan.bio}
@@ -89,7 +89,7 @@ export default async function ArtisanProfilePage({ params }: Props) {
           ) : null}
 
           {artisan.company.description ? (
-            <div className="mt-8 rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-[var(--shadow-soft)]">
+            <div className="mt-8 rounded-[var(--radius-lg)] border border-line bg-surface p-5 shadow-[var(--shadow-soft)] sm:p-6">
               <h2 className="font-display text-lg font-semibold text-ink">
                 L&apos;entreprise
               </h2>
@@ -135,8 +135,11 @@ export default async function ArtisanProfilePage({ params }: Props) {
           </div>
         </div>
 
-        <div className="lg:col-span-2">
-          <Card className="sticky top-24 border-ink/10">
+        <div className="order-1 lg:order-2 lg:col-span-2">
+          <Card
+            id="demande"
+            className="border-ink/10 lg:sticky lg:top-[calc(5.5rem+env(safe-area-inset-top))]"
+          >
             <CardHeader className="border-b border-line bg-surface-muted/40">
               <CardTitle>Demander une intervention</CardTitle>
               <p className="text-sm text-steel">

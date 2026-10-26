@@ -15,12 +15,12 @@ export function PriorityStrip({ items }: { items: PriorityItem[] }) {
 
   return (
     <div className="mb-6 overflow-hidden rounded-[var(--radius-lg)] border border-ink/10 bg-ink text-white shadow-[var(--shadow-soft)]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-300/80">
             Focus
           </p>
-          <p className="font-display text-lg font-semibold">
+          <p className="font-display text-base font-semibold sm:text-lg">
             {items.length} priorité{items.length > 1 ? "s" : ""} maintenant
           </p>
         </div>
@@ -30,7 +30,7 @@ export function PriorityStrip({ items }: { items: PriorityItem[] }) {
           <li key={item.id}>
             <Link
               href={item.href}
-              className="group flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-white/5"
+              className="group flex items-center justify-between gap-3 px-4 py-3.5 transition-colors active:bg-white/5 sm:gap-4 sm:px-5 sm:py-4 sm:hover:bg-white/5"
             >
               <div className="flex min-w-0 items-start gap-3">
                 <span

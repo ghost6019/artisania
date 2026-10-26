@@ -30,11 +30,11 @@ export default async function ArtisansPage({ searchParams }: Props) {
   return (
     <div>
       <section className="border-b border-white/10 bg-ink text-white">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-6xl safe-px py-10 sm:px-6 sm:py-14">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300/80">
             Annuaire
           </p>
-          <h1 className="mt-3 max-w-2xl font-display text-4xl font-semibold tracking-tight">
+          <h1 className="mt-3 max-w-2xl font-display text-[1.85rem] font-semibold leading-tight tracking-tight sm:text-4xl">
             Des artisans vérifiés, près de chez vous.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
@@ -42,17 +42,19 @@ export default async function ArtisansPage({ searchParams }: Props) {
             une demande d&apos;intervention.
           </p>
 
-          <form className="mt-8 grid gap-2 rounded-[var(--radius-lg)] border border-white/10 bg-white/5 p-2 backdrop-blur sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]">
+          <form className="mt-6 grid gap-2 rounded-[var(--radius-lg)] border border-white/10 bg-white/5 p-2.5 backdrop-blur sm:mt-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto]">
             <Input
               name="q"
               defaultValue={params.q}
               placeholder="Mot-clé, métier…"
               className="border-white/10 bg-white/95 sm:col-span-2 lg:col-span-1"
+              autoComplete="off"
+              enterKeyHint="search"
             />
             <select
               name="trade"
               defaultValue={params.trade ?? ""}
-              className="flex h-10 w-full rounded-lg border border-white/10 bg-white/95 px-3 text-sm text-ink"
+              className="flex h-11 w-full rounded-lg border border-white/10 bg-white/95 px-3 text-base text-ink sm:h-10 sm:text-sm"
             >
               <option value="">Tous les métiers</option>
               {trades.map((t) => (
@@ -66,8 +68,9 @@ export default async function ArtisansPage({ searchParams }: Props) {
               defaultValue={params.city}
               placeholder="Ville"
               className="border-white/10 bg-white/95"
+              autoComplete="address-level2"
             />
-            <Button type="submit" variant="accent" className="w-full sm:col-span-2 lg:col-span-1" aria-label="Rechercher">
+            <Button type="submit" variant="accent" className="h-11 w-full sm:col-span-2 sm:h-10 lg:col-span-1" aria-label="Rechercher">
               <Search className="h-4 w-4" />
               Rechercher
             </Button>
@@ -75,14 +78,14 @@ export default async function ArtisansPage({ searchParams }: Props) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <div className="mb-6 flex items-end justify-between gap-4">
+      <div className="mx-auto max-w-6xl safe-px py-8 sm:px-6 sm:py-10">
+        <div className="mb-5 flex items-end justify-between gap-3 sm:mb-6 sm:gap-4">
           <p className="text-sm text-steel">
             <span className="font-semibold text-ink">{artisans.length}</span>{" "}
             profil{artisans.length > 1 ? "s" : ""} public
             {artisans.length > 1 ? "s" : ""}
           </p>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" className="shrink-0">
             <Link href="/inscription">
               Je suis artisan
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -106,7 +109,7 @@ export default async function ArtisansPage({ searchParams }: Props) {
               <Link
                 key={a.id}
                 href={`/artisans/${a.slug}`}
-                className="group flex flex-col rounded-[var(--radius-lg)] border border-line bg-surface p-6 shadow-[var(--shadow-soft)] transition-[transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-ink/20"
+                className="group flex flex-col rounded-[var(--radius-lg)] border border-line bg-surface p-5 shadow-[var(--shadow-soft)] transition-[transform,border-color] duration-200 active:border-ink/20 sm:p-6 sm:hover:-translate-y-0.5 sm:hover:border-ink/20"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -149,8 +152,8 @@ export default async function ArtisansPage({ searchParams }: Props) {
                   ) : (
                     <span>Nouveau sur Artisania</span>
                   )}
-                  <span className="font-medium text-accent-ink opacity-0 transition-opacity group-hover:opacity-100">
-                    Voir le profil →
+                  <span className="font-medium text-accent-ink opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+                    Voir →
                   </span>
                 </div>
               </Link>

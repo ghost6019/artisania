@@ -153,11 +153,15 @@ export default async function DashboardPage() {
 
       <PriorityStrip items={priorities.slice(0, 3)} />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-5">
         {cards.map((c) => (
-          <Link key={c.label} href={c.href} className="group">
+          <Link
+            key={c.label}
+            href={c.href}
+            className="group last:col-span-2 xl:last:col-span-1"
+          >
             <Card
-              className={`h-full transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-0.5 group-hover:border-ink/15 ${
+              className={`h-full transition-[transform,box-shadow,border-color] duration-200 active:border-ink/15 sm:group-hover:-translate-y-0.5 sm:group-hover:border-ink/15 ${
                 c.tone === "accent"
                   ? "border-accent/30 bg-accent-soft/40"
                   : c.tone === "warn"
@@ -165,14 +169,14 @@ export default async function DashboardPage() {
                     : ""
               }`}
             >
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-steel">
+              <CardContent className="p-3.5 sm:p-5">
+                <div className="flex items-center justify-between gap-1">
+                  <p className="truncate text-[10px] font-semibold uppercase tracking-[0.12em] text-steel sm:text-[11px] sm:tracking-[0.14em]">
                     {c.label}
                   </p>
-                  <c.icon className="h-4 w-4 text-steel/70" />
+                  <c.icon className="h-3.5 w-3.5 shrink-0 text-steel/70 sm:h-4 sm:w-4" />
                 </div>
-                <p className="mt-3 font-display text-3xl font-semibold text-ink">
+                <p className="mt-2 font-display text-2xl font-semibold text-ink sm:mt-3 sm:text-3xl">
                   {c.value}
                 </p>
               </CardContent>
@@ -183,14 +187,14 @@ export default async function DashboardPage() {
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-line/80 bg-surface-muted/40">
-            <div>
+          <CardHeader className="flex flex-col gap-3 border-b border-line/80 bg-surface-muted/40 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+            <div className="min-w-0">
               <CardTitle>Agenda du jour</CardTitle>
               <p className="mt-1 text-xs text-steel">
                 Vue chronologique de vos rendez-vous
               </p>
             </div>
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="self-start sm:self-auto">
               <Link href="/dashboard/agenda">
                 Agenda
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -210,9 +214,9 @@ export default async function DashboardPage() {
                 {stats.todayAgenda.map((a) => (
                   <li
                     key={a.id}
-                    className="flex items-start gap-4 px-6 py-4 transition-colors hover:bg-surface-muted/40"
+                    className="flex items-start gap-3 px-4 py-3.5 transition-colors active:bg-surface-muted/40 sm:gap-4 sm:px-6 sm:py-4 sm:hover:bg-surface-muted/40"
                   >
-                    <div className="w-14 shrink-0 pt-0.5 text-right">
+                    <div className="w-12 shrink-0 pt-0.5 text-right sm:w-14">
                       <p className="font-display text-sm font-semibold text-ink">
                         {new Intl.DateTimeFormat("fr-FR", {
                           hour: "2-digit",
@@ -220,7 +224,7 @@ export default async function DashboardPage() {
                         }).format(new Date(a.startsAt))}
                       </p>
                     </div>
-                    <div className="min-w-0 flex-1 border-l-2 border-accent/50 pl-4">
+                    <div className="min-w-0 flex-1 border-l-2 border-accent/50 pl-3 sm:pl-4">
                       <p className="font-medium text-ink">{a.title}</p>
                       <p className="mt-0.5 text-xs text-steel">
                         {a.customer

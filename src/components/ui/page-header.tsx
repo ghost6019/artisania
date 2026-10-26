@@ -12,14 +12,14 @@ export function PageHeader({
   eyebrow,
 }: PageHeaderProps) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
+    <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+      <div className="min-w-0">
         {eyebrow ? (
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
           {title}
         </h1>
         {description ? (

@@ -108,7 +108,9 @@ export function DashboardSidebar({
             aria-label="Fermer le menu"
             onClick={onClose}
           />
-          <aside className="absolute inset-y-0 left-0 w-72 shadow-2xl">{content}</aside>
+          <aside className="absolute inset-y-0 left-0 w-[min(18rem,88vw)] pt-[env(safe-area-inset-top)] shadow-2xl safe-pb">
+            {content}
+          </aside>
         </div>
       ) : null}
     </>

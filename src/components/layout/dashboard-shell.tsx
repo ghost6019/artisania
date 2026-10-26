@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, LogOut, ExternalLink } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -19,31 +19,39 @@ export function DashboardShell({
   companyName,
 }: DashboardShellProps) {
   const [open, setOpen] = useState(false);
+  const firstName = userName.split(" ")[0] || userName;
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-dvh bg-background">
       <DashboardSidebar
         companyName={companyName}
         open={open}
         onClose={() => setOpen(false)}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-[4.25rem] items-center justify-between border-b border-line bg-surface/90 px-4 backdrop-blur-md sm:px-6">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-30 flex h-[calc(4.25rem+env(safe-area-inset-top))] items-center justify-between border-b border-line bg-surface/90 px-3 pt-[env(safe-area-inset-top)] backdrop-blur-md sm:px-6">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="h-11 w-11 shrink-0 lg:hidden"
               onClick={() => setOpen(true)}
               aria-label="Ouvrir le menu"
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <div>
-              <p className="text-sm font-medium text-ink">
-                Bonjour, {userName.split(" ")[0]}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-ink">
+                Bonjour, {firstName}
               </p>
-              <p className="text-xs text-steel">
+              <p className="truncate text-xs capitalize text-steel">
                 {new Intl.DateTimeFormat("fr-FR", {
                   weekday: "long",
                   day: "numeric",
@@ -52,7 +60,18 @@ export function DashboardShell({
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="h-11 w-11 sm:hidden"
+              aria-label="Site public"
+            >
+              <Link href="/artisans">
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </Button>
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link href="/artisans">
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -62,6 +81,7 @@ export function DashboardShell({
             <Button
               variant="outline"
               size="sm"
+              className="h-10"
               onClick={() => signOut({ callbackUrl: "/" })}
             >
               <LogOut className="h-4 w-4" />
@@ -69,7 +89,9 @@ export function DashboardShell({
             </Button>
           </div>
         </header>
-        <main className="flex-1 px-4 py-7 sm:px-6 lg:px-8">{children}</main>
+        <main className="flex-1 px-3 py-5 sm:px-6 sm:py-7 lg:px-8 safe-pb">
+          {children}
+        </main>
       </div>
     </div>
   );

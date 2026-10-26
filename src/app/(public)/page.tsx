@@ -23,14 +23,14 @@ export default async function HomePage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center animate-kenburns"
+          className="object-cover object-[68%_center] animate-kenburns sm:object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/92 to-ink/40 sm:to-ink/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/92 to-ink/55 sm:to-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/55" />
 
-        <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-10 pt-24 sm:min-h-[min(100svh,940px)] sm:px-6 sm:pb-20 lg:pb-24">
+        <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end safe-px pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[calc(5.5rem+env(safe-area-inset-top))] sm:min-h-[min(100svh,940px)] sm:px-6 sm:pb-20 lg:pb-24">
           <div className="animate-rise flex items-center gap-3">
-            <LogoMark inverted size="lg" />
+            <LogoMark inverted size="lg" className="!h-10 !w-10 sm:!h-12 sm:!w-12" />
             <div>
               <p className="font-display text-lg font-semibold tracking-tight text-white sm:text-xl">
                 {appName}
@@ -42,18 +42,18 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <h1 className="animate-rise-delay-1 mt-6 max-w-[14ch] font-display text-[2.35rem] font-semibold leading-[0.98] tracking-tight sm:mt-8 sm:max-w-[16ch] sm:text-5xl lg:text-[4.5rem]">
+          <h1 className="animate-rise-delay-1 mt-5 max-w-[13ch] font-display text-[clamp(2rem,8.2vw,2.5rem)] font-semibold leading-[1.02] tracking-tight sm:mt-8 sm:max-w-[16ch] sm:text-5xl lg:text-[4.5rem] lg:leading-[0.98]">
             L&apos;outil qui fait tenir
             <span className="block text-teal-200">l&apos;atelier et le chantier.</span>
           </h1>
 
-          <p className="animate-rise-delay-2 mt-5 max-w-xl text-[0.95rem] leading-relaxed text-white/68 sm:mt-6 sm:text-lg">
+          <p className="animate-rise-delay-2 mt-4 max-w-xl text-[0.95rem] leading-relaxed text-white/68 sm:mt-6 sm:text-lg">
             Clients, agenda, interventions, devis, factures — et une présence
             publique pour être trouvé. Conçu pour les métiers manuels en France.
           </p>
 
-          <div className="animate-rise-delay-2 mt-8 flex w-full flex-col gap-3 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap">
-            <Button asChild size="lg" variant="accent" className="w-full sm:w-auto">
+          <div className="animate-rise-delay-2 mt-7 flex w-full flex-col gap-2.5 sm:mt-9 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-3">
+            <Button asChild size="lg" variant="accent" className="h-12 w-full sm:w-auto">
               <Link href="/inscription">
                 Ouvrir mon atelier
                 <ArrowRight className="h-4 w-4" />
@@ -63,30 +63,30 @@ export default async function HomePage() {
               asChild
               size="lg"
               variant="outline"
-              className="w-full border-white/25 bg-white/5 text-white hover:border-white/45 hover:bg-white/10 sm:w-auto"
+              className="h-12 w-full border-white/25 bg-white/5 text-white hover:border-white/45 hover:bg-white/10 sm:w-auto"
             >
               <Link href="/artisans">Trouver un artisan</Link>
             </Button>
           </div>
 
-          <div className="animate-rise-delay-2 mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-5 text-xs text-white/55 sm:mt-12 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-3 sm:pt-6 sm:text-sm">
-            <p>
-              <span className="block font-display text-lg font-semibold text-white sm:inline sm:text-xl">
+          <div className="animate-rise-delay-2 mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 text-[11px] text-white/55 sm:mt-12 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-3 sm:pt-6 sm:text-sm">
+            <p className="min-w-0">
+              <span className="block font-display text-base font-semibold text-white sm:inline sm:text-xl">
                 {stats.artisans || "—"}
               </span>{" "}
-              <span className="sm:inline">profils</span>
+              <span className="block truncate sm:inline">profils</span>
             </p>
-            <p>
-              <span className="block font-display text-lg font-semibold text-white sm:inline sm:text-xl">
+            <p className="min-w-0">
+              <span className="block font-display text-base font-semibold text-white sm:inline sm:text-xl">
                 {stats.trades || "—"}
               </span>{" "}
-              métiers
+              <span className="block truncate sm:inline">métiers</span>
             </p>
-            <p>
-              <span className="block font-display text-lg font-semibold text-white sm:inline sm:text-xl">
+            <p className="min-w-0">
+              <span className="block font-display text-base font-semibold text-white sm:inline sm:text-xl">
                 {stats.companies || "—"}
               </span>{" "}
-              entreprises
+              <span className="block truncate sm:inline">entreprises</span>
             </p>
           </div>
         </div>
@@ -319,7 +319,7 @@ export default async function HomePage() {
       {/* Deux portes */}
       <section className="bg-ink text-white atelier-grain">
         <div className="relative mx-auto grid max-w-6xl lg:grid-cols-2">
-          <Reveal className="border-b border-white/10 p-8 sm:p-14 lg:border-b-0 lg:border-r">
+          <Reveal className="border-b border-white/10 p-6 sm:p-14 lg:border-b-0 lg:border-r">
             <LogoMark inverted size="md" />
             <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300/80 sm:mt-6">
               Artisans
@@ -338,7 +338,7 @@ export default async function HomePage() {
               </Link>
             </Button>
           </Reveal>
-          <Reveal delay={100} className="p-8 sm:p-14">
+          <Reveal delay={100} className="p-6 sm:p-14">
             <LogoMark inverted size="md" />
             <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-teal-300/80 sm:mt-6">
               Particuliers

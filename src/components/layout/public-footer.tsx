@@ -6,7 +6,7 @@ export function PublicFooter() {
 
   return (
     <footer className="border-t border-line bg-ink text-white">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-8 safe-px py-10 sm:gap-10 sm:px-6 sm:py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Logo inverted href="/" size="md" />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">
@@ -46,7 +46,7 @@ export function PublicFooter() {
           </p>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/35">
+      <div className="border-t border-white/10 py-4 text-center text-xs text-white/35 safe-pb">
         © {year} Artisania. Fabriqué pour les métiers.
       </div>
     </footer>
